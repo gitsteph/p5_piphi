@@ -47,13 +47,15 @@ function load_num_digits(num_digits, pi_thousand_arr, phi_thousand_arr) {
 function togglePiPhi() {
     fill("white");
     stroke("orange");
-    strokeWeight(2);
+    strokeWeight(4);
     rect(titleText1Width - 50, 10, 70, 60);
     [selected_value_to_visualize, toggle_value] = [toggle_value, selected_value_to_visualize];
 
     textSize(50);
     fill("magenta");
     stroke("orange");
+    strokeWeight(2);
+
     let titleText2 = text(selected_value_to_visualize, titleText1Width - 50, 50);
 
     render_display(selected_value_to_visualize);
@@ -88,7 +90,7 @@ function setup() {
 
     // create bounding box for display
     stroke("lightgrey");
-    strokeWeight(10);
+    strokeWeight(2);
     let bbWidth = canvasWidth - 10;
     let bbHeight = canvasHeight - canvasHeight * 0.25;
     let bbPosX = 0;
@@ -100,7 +102,7 @@ function setup() {
         "bbPosY": bbPosY
     };
     rect(
-        boundingBoxParamsObj["bbPosX"] + 10,
+        boundingBoxParamsObj["bbPosX"] + 8,
         boundingBoxParamsObj["bbPosY"] - 5,
         boundingBoxParamsObj["bbWidth"],
         boundingBoxParamsObj["bbHeight"]
@@ -159,6 +161,7 @@ function setup() {
     let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, 100);
 
     fill("white");
+    strokeWeight(4);
     rect(titleText1Width - 50, 10, 70, 60);
 
     strokeWeight(2);
@@ -176,7 +179,7 @@ function setup() {
 
 function draw() {
     stroke("darkgray");
-    strokeWeight(10);
+    strokeWeight(2);
     fill("white");
     rect(
         boundingBoxParamsObj["bbPosX"],
