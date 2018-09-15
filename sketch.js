@@ -99,7 +99,7 @@ function render_display(pi_or_phi) {
 
 function setup() {
     var canvasWidth = windowWidth * 0.95;
-    var canvasHeight = windowHeight * 0.95;
+    var canvasHeight = windowHeight * 0.95 + 10;
     var canvas = createCanvas(canvasWidth, canvasHeight);
     cursor(CROSS);
 
@@ -127,10 +127,21 @@ function setup() {
     strokeWeight(1);
     textSize(12);
 
-    let metaBox = text(
-        "(made with p5.js; sources: https://www.angio.net/pi/digits.html, https://www.goldennumber.net/phi-million-places/)",
+    let metaBox1 = text(
+        "[read across rows & wrap down columns]",
+        boundingBoxParamsObj["bbWidth"] * .75,
+        boundingBoxParamsObj["bbPosY"] - 10
+    );
+
+    let metaBox2 = text(
+        "sources: https://www.angio.net/pi/digits.html, https://www.goldennumber.net/phi-million-places/",
         0,
         boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 20
+    );
+    let metaBox3 = text(
+        "made with p5.js",
+        0,
+        boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 30
     );
 
     // index is used to correspond to digit; e.g. colorKeyArr[0] returns the color for all `0` digits
