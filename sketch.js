@@ -1,18 +1,20 @@
 var boundingBoxParamsObj;
 var colorKeyArr;
-var numRectsPerRow;
-var pi_phi_manager;
-var selected_value_to_visualize;
+var numCols;
+var numRows;
+var piPhiManager;
+var selectedValToVisualize;
 var titleText1Width;
-var toggle_value;
+var toggleVal;
 var toggle;
 
-var digits_to_display_default = 100;
+var cellPadding = 10;
+var digitsToDisplayDefault = 100;
 var titleText2Width = 70;
 var digitRectWidth = 50;
 
 // note: removing the decimal points here, rendering separately
-const pi_first_thousand_digits = '314159265358979323846264338327950288419716939937510582097494459230' + 
+const piFirstThousandDigits = '314159265358979323846264338327950288419716939937510582097494459230' + 
 '7816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102' + 
 '7019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603' + 
 '4861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133' + 
@@ -23,7 +25,7 @@ const pi_first_thousand_digits = '3141592653589793238462643383279502884197169399
 '9983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387' + 
 '5288658753320838142061717766914730359825349042875546873115956286388235378759375195778185778053217122' + 
 '68066130019278766111959092164201989';
-const phi_first_thousand_digits = '161803398874989484820458683436563811772030917980576286213544862270' + 
+const phiFirstThousandDigits = '161803398874989484820458683436563811772030917980576286213544862270' + 
 '5260462818902449707207204189391137484754088075386891752126633862223536931793180060766726354433389086' + 
 '5959395829056383226613199282902678806752087668925017116962070322210432162695486262963136144381497587' + 
 '0122034080588795445474924618569536486444924104432077134494704956584678850987433944221254487706647809' + 
@@ -36,12 +38,12 @@ const phi_first_thousand_digits = '161803398874989484820458683436563811772030917
 '429622675756052317277752035361393';
 
 
-// TODO: create textfield to allow adjusting num digits to display
-// TODO: swap snake_case parts to camelCase oops
-function load_num_digits(num_digits, pi_thousand_arr, phi_thousand_arr) {
-    let target_pi_arr = pi_thousand_arr.slice(0, num_digits);
-    let target_phi_arr = phi_thousand_arr.slice(0, num_digits);
-    return [target_pi_arr, target_phi_arr];
+// EXTRA TODO: create textfield to allow adjusting num digits to display
+// EXTRA TODO: add chimes and some shimmer effects
+function load_num_digits(numDigits, piThousandArr, phiThousandArr) {
+    let targetPiArr = piThousandArr.slice(0, numDigits);
+    let targetPhiArr = phiThousandArr.slice(0, numDigits);
+    return [targetPiArr, targetPhiArr];
 }
 
 function togglePiPhi() {
@@ -49,36 +51,49 @@ function togglePiPhi() {
     stroke("orange");
     strokeWeight(4);
     rect(titleText1Width - 50, 10, 70, 60);
-    [selected_value_to_visualize, toggle_value] = [toggle_value, selected_value_to_visualize];
+    [selectedValToVisualize, toggleVal] = [toggleVal, selectedValToVisualize];
 
     textSize(50);
     fill("magenta");
     stroke("orange");
     strokeWeight(2);
 
-    let titleText2 = text(selected_value_to_visualize, titleText1Width - 50, 50);
+    let titleText2 = text(selectedValToVisualize, titleText1Width - 50, 50);
 
-    render_display(selected_value_to_visualize);
+    render_display(selectedValToVisualize);
 }
 
 function render_display(pi_or_phi) {
-    target_piphi_arr = pi_phi_manager[pi_or_phi][1];
-    let startingX = boundingBoxParamsObj["bbPosX"] + 10;
-    let startingY = boundingBoxParamsObj["bbPosY"] + 10;
+    let targetPiPhiArr = piPhiManager[pi_or_phi][1];
+    let startingX = boundingBoxParamsObj["bbPosX"] + cellPadding;
+    let startingY = boundingBoxParamsObj["bbPosY"] + cellPadding;
 
-    for (let i=0; i < target_piphi_arr.length - 1; i++) {
-        let targetDigit = int(target_piphi_arr[i]);
-        if (i == 1) {
-            // TODO: render `.` this separately
-        };
-        let targetColor = colorKeyArr[targetDigit];
-        strokeWeight(3);
-        stroke(targetColor);
-        fill(targetColor);
-        rect(startingX + i * (digitRectWidth + 8), startingY, digitRectWidth, digitRectWidth);
+    var targetDigitIndex = 0;
+    for (let rowIndex=0; rowIndex < numRows; rowIndex++) {
+        for (let colIndex=0; colIndex < numCols; colIndex++) {
+            if (targetDigitIndex >= targetPiPhiArr.length) {
+                return;
+            }
 
-        // TO-DO: render digit inside rect
+            let targetDigit = int(targetPiPhiArr[targetDigitIndex]);
+            if (targetDigitIndex == 1) {
+                // TODO: render `.` this separately
+            };
+            let targetColor = colorKeyArr[targetDigit];
 
+            strokeWeight(3);
+            stroke(targetColor);
+            fill(targetColor);
+
+            let targetPosX = startingX + colIndex * (digitRectWidth + cellPadding);
+            let targetPosY = startingY + rowIndex * (digitRectWidth + cellPadding);
+            rect(targetPosX, targetPosY, digitRectWidth, digitRectWidth);
+
+            // TO-DO: render digit inside rect
+            // TO-DO: size depending on spacing of bb
+
+            targetDigitIndex++;
+        }
     }
 }
 
@@ -133,22 +148,22 @@ function setup() {
     ];
 
     // load digits of pi & phi into arrays
-    let pi_thousand_arr = pi_first_thousand_digits.split("");
-    let phi_thousand_arr = phi_first_thousand_digits.split("");
-    let target_piphi = load_num_digits(digits_to_display_default, pi_thousand_arr, phi_thousand_arr);
-    let target_pi_arr = target_piphi[0];
-    let target_phi_arr = target_piphi[1];
-    pi_phi_manager = {
-        "pi": [pi_thousand_arr, target_pi_arr],
-        "phi": [phi_thousand_arr, target_phi_arr]
+    let piThousandArr = piFirstThousandDigits.split("");
+    let phiThousandArr = phiFirstThousandDigits.split("");
+    let targetPiPhi = load_num_digits(digitsToDisplayDefault, piThousandArr, phiThousandArr);
+    let targetPiArr = targetPiPhi[0];
+    let targetPhiArr = targetPiPhi[1];
+    piPhiManager = {
+        "pi": [piThousandArr, targetPiArr],
+        "phi": [phiThousandArr, targetPhiArr]
     };
 
     // randomly select pi or phi to default
-    selected_value_to_visualize = random(Object.keys(pi_phi_manager));
-    toggle_value = selected_value_to_visualize == "pi" ? "phi": "pi";
+    selectedValToVisualize = random(Object.keys(piPhiManager));
+    toggleVal = selectedValToVisualize == "pi" ? "phi": "pi";
 
     // render display for selected value to visualize
-    render_display(selected_value_to_visualize);
+    render_display(selectedValToVisualize);
 
     fill("rgba(100%,0%,100%,0.5)");
     stroke("orange");
@@ -168,7 +183,7 @@ function setup() {
     textSize(50);
     fill("magenta");
     stroke("orange");
-    let titleText2 = text(selected_value_to_visualize, titleText1Width - 50, 50);
+    let titleText2 = text(selectedValToVisualize, titleText1Width - 50, 50);
 
     toggle = createButton("toggle");
     toggle.position(titleText1Width - 50, 70);
@@ -187,7 +202,14 @@ function draw() {
         boundingBoxParamsObj["bbWidth"],
         boundingBoxParamsObj["bbHeight"]
     );
-    numRectsPerRow = boundingBoxParamsObj["bbWidth"] / digitRectWidth;
+    // numRectsPerRow corresponds conceptually to num cols
+    let numRectsPerRow = int((boundingBoxParamsObj["bbWidth"] - 180) / digitRectWidth);
+    numCols = numRectsPerRow;
 
-    render_display(selected_value_to_visualize);
+    // numRectsPerCol corresponds conceptually to num rows
+    let numRectsPerCol = int(boundingBoxParamsObj["bbHeight"] / digitRectWidth);
+    numRows = numRectsPerCol;
+    console.log(numCols, numRows);
+
+    render_display(selectedValToVisualize);
 }
