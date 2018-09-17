@@ -56,7 +56,7 @@ function togglePiPhi() {
     textSize(50);
     fill("magenta");
     stroke("orange");
-    strokeWeight(2);
+    strokeWeight(4);
 
     let titleText2 = text(selectedValToVisualize, titleText1Width - 50, 50);
 
@@ -76,9 +76,6 @@ function render_display(pi_or_phi) {
             }
 
             let targetDigit = int(targetPiPhiArr[targetDigitIndex]);
-            if (targetDigitIndex == 1) {
-                // TODO: render `.` this separately
-            };
             let targetColor = colorKeyArr[targetDigit];
 
             strokeWeight(3);
@@ -87,9 +84,29 @@ function render_display(pi_or_phi) {
 
             let targetPosX = startingX + colIndex * (digitRectWidth + cellPadding);
             let targetPosY = startingY + rowIndex * (digitRectWidth + cellPadding);
+            // TODO: color gradient edges for stroke
             rect(targetPosX, targetPosY, digitRectWidth, digitRectWidth);
+            if (targetDigitIndex == 1) {
+                // render `.` this separately
+                stroke("navy");
+                fill("cyan");
+                strokeWeight(5);
+                textSize(40);
+                let periodText = text(".", targetPosX - (cellPadding * 9 / 10), targetPosY + digitRectWidth);   
+            };
 
-            // TO-DO: render digit inside rect
+            // render digit inside rect
+            stroke("navy");
+            strokeWeight(4);
+            fill("white");
+            textSize(20);
+
+            let digitText = text(
+                targetDigit,
+                targetPosX + (digitRectWidth * 1 / 3),
+                targetPosY + (digitRectWidth * 2 / 3)
+            );
+
             // TO-DO: size depending on spacing of bb
 
             targetDigitIndex++;
@@ -220,7 +237,6 @@ function draw() {
     // numRectsPerCol corresponds conceptually to num rows
     let numRectsPerCol = int(boundingBoxParamsObj["bbHeight"] / digitRectWidth);
     numRows = numRectsPerCol;
-    console.log(numCols, numRows);
 
     render_display(selectedValToVisualize);
 }
