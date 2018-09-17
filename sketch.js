@@ -1,5 +1,6 @@
 var boundingBoxParamsObj;
 var colorKeyArr;
+var digitRectWidth;
 var numCols;
 var numRows;
 var piPhiManager;
@@ -9,10 +10,9 @@ var titleText1Width;
 var toggleVal;
 var toggle;
 
-var cellPadding = 10;
+var cellPadding = 5;
 var digitsToDisplayDefault = 100;
 var titleText2Width = 70;
-var digitRectWidth = 50;
 
 // note: removing the decimal points here, rendering separately
 const piFirstThousandDigits = '314159265358979323846264338327950288419716939937510582097494459230' + 
@@ -39,8 +39,6 @@ const phiFirstThousandDigits = '161803398874989484820458683436563811772030917980
 '429622675756052317277752035361393';
 
 
-// EXTRA TODO: create textfield to allow adjusting num digits to display
-// EXTRA TODO: add chimes and some shimmer effects
 function load_num_digits(numDigits, piThousandArr, phiThousandArr) {
     let targetPiArr = piThousandArr.slice(0, numDigits);
     let targetPhiArr = phiThousandArr.slice(0, numDigits);
@@ -65,9 +63,11 @@ function togglePiPhi() {
 }
 
 function insertNumDigits() {
-    let targetArr = load_num_digits(parseInt(this.value()), piFirstThousandDigits, phiFirstThousandDigits);
+    let numDigitsInt = Math.min(1000, parseInt(this.value()));
+    let targetArr = load_num_digits(numDigitsInt, piFirstThousandDigits, phiFirstThousandDigits);
     piPhiManager["pi"][1] = targetArr[0];
     piPhiManager["phi"][1] = targetArr[1];
+    digitRectWidth = calculateDigitRectWidth(numDigitsInt);
 }
 
 function render_display(pi_or_phi) {
@@ -102,17 +102,18 @@ function render_display(pi_or_phi) {
                 let periodText = text(".", targetPosX - (cellPadding * 9 / 10), targetPosY + digitRectWidth);   
             };
 
+            // disabling this feature
             // render digit inside rect
-            stroke("navy");
-            strokeWeight(4);
-            fill("white");
-            textSize(20);
+            // stroke("navy");
+            // strokeWeight(4);
+            // fill("white");
+            // textSize(20);
 
-            let digitText = text(
-                targetDigit,
-                targetPosX + (digitRectWidth * 1 / 3),
-                targetPosY + (digitRectWidth * 2 / 3)
-            );
+            // let digitText = text(
+            //     targetDigit,
+            //     targetPosX + (digitRectWidth * 1 / 3),
+            //     targetPosY + (digitRectWidth * 2 / 3)
+            // );
 
             // TO-DO: size depending on spacing of bb
 
@@ -121,9 +122,20 @@ function render_display(pi_or_phi) {
     }
 }
 
+function calculateDigitRectWidth(numDigits) {
+    let minW = 3;
+    let maxW = 1000;
+    for (let w = minW; w < maxW; w++) {
+        let maxRects = Math.floor(boundingBoxParamsObj["bbWidth"] / w) * Math.floor(boundingBoxParamsObj["bbHeight"] / w);
+        if (maxRects < numDigits) {
+            return w - 1 - cellPadding;
+        }
+    }
+}
+
 function setup() {
     var canvasWidth = windowWidth * 0.95;
-    var canvasHeight = windowHeight * 0.95 + 10;
+    var canvasHeight = windowHeight * 0.95;
     var canvas = createCanvas(canvasWidth, canvasHeight);
     cursor(CROSS);
 
@@ -131,9 +143,9 @@ function setup() {
     stroke("lightgrey");
     strokeWeight(2);
     let bbWidth = canvasWidth - 10;
-    let bbHeight = canvasHeight - canvasHeight * 0.25;
+    let bbHeight = canvasHeight - canvasHeight * 0.3;
     let bbPosX = 0;
-    let bbPosY = 0 + canvasHeight * 0.2;
+    let bbPosY = 0 + canvasHeight * 0.23;
     boundingBoxParamsObj = {
         "bbWidth": bbWidth,
         "bbHeight": bbHeight,
@@ -147,13 +159,26 @@ function setup() {
         boundingBoxParamsObj["bbHeight"]
     );
 
+    digitRectWidth = calculateDigitRectWidth(digitsToDisplayDefault);
+
+    // create legend container
+    stroke("magenta");
+    rect(
+        boundingBoxParamsObj["bbWidth"] / 2,
+        boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 5,
+        (digitRectWidth / 2 + cellPadding) * 10,
+        (digitRectWidth / 2 + cellPadding)
+    );
+
+    // TODO: populate legend
+
+    noStroke();
     fill("black");
-    strokeWeight(1);
     textSize(12);
 
     let metaBox1 = text(
         "[read across rows & wrap down columns]",
-        boundingBoxParamsObj["bbWidth"] * .75,
+        0,
         boundingBoxParamsObj["bbPosY"] - 10
     );
 
@@ -208,29 +233,33 @@ function setup() {
     titleText1Width = textWidth(titleText1);
     fill("orange");
     textSize(25);
-    let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, 100);
+    let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, 115);
 
     fill("white");
     strokeWeight(4);
     rect(titleText1Width - 50, 10, 70, 60);
 
-    strokeWeight(2);
     textSize(50);
     fill("magenta");
     stroke("orange");
     let titleText2 = text(selectedValToVisualize, titleText1Width - 50, 50);
 
     toggle = createButton("toggle");
-    toggle.position(titleText1Width - 50, 70);
+    toggle.position(titleText1Width, 70);
     toggle.mousePressed(togglePiPhi);
 
-    // TODO: create info textbox for selected digits within frame stats
+    // select num digits to display
     noStroke();
     textSize(14);
     numDigitsInput = createInput("100");
     numDigitsInput.input(insertNumDigits);
-    numDigitsInput.position(15, 70);
-    let numDigitsInputText = text("first digits (< 1,000)", numDigitsInput.width + 8, 75);    
+    numDigitsInput.position(20, 75);
+    let numDigitsInputText2 = text("first digits", 14 + numDigitsInput.width, 75);
+    textSize(10);
+    fill("black");
+    let numDigitsInputText3 = text("(max: 1000)", 14 + numDigitsInput.width, 85);
+
+    // TODO: render small histogram
 }
 
 function draw() {
@@ -243,12 +272,13 @@ function draw() {
         boundingBoxParamsObj["bbWidth"],
         boundingBoxParamsObj["bbHeight"]
     );
+
     // numRectsPerRow corresponds conceptually to num cols
-    let numRectsPerRow = int((boundingBoxParamsObj["bbWidth"] - 180) / digitRectWidth);
+    let numRectsPerRow = Math.floor(boundingBoxParamsObj["bbWidth"] / (digitRectWidth + cellPadding));
     numCols = numRectsPerRow;
 
     // numRectsPerCol corresponds conceptually to num rows
-    let numRectsPerCol = int(boundingBoxParamsObj["bbHeight"] / digitRectWidth);
+    let numRectsPerCol = Math.floor(boundingBoxParamsObj["bbHeight"] / (digitRectWidth + cellPadding));
     numRows = numRectsPerCol;
 
     render_display(selectedValToVisualize);
