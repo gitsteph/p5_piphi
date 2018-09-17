@@ -4,6 +4,7 @@ var numCols;
 var numRows;
 var piPhiManager;
 var selectedValToVisualize;
+var numDigitsInput;
 var titleText1Width;
 var toggleVal;
 var toggle;
@@ -61,6 +62,12 @@ function togglePiPhi() {
     let titleText2 = text(selectedValToVisualize, titleText1Width - 50, 50);
 
     render_display(selectedValToVisualize);
+}
+
+function insertNumDigits() {
+    let targetArr = load_num_digits(parseInt(this.value()), piFirstThousandDigits, phiFirstThousandDigits);
+    piPhiManager["pi"][1] = targetArr[0];
+    piPhiManager["phi"][1] = targetArr[1];
 }
 
 function render_display(pi_or_phi) {
@@ -218,6 +225,12 @@ function setup() {
     toggle.mousePressed(togglePiPhi);
 
     // TODO: create info textbox for selected digits within frame stats
+    noStroke();
+    textSize(14);
+    numDigitsInput = createInput("100");
+    numDigitsInput.input(insertNumDigits);
+    numDigitsInput.position(15, 70);
+    let numDigitsInputText = text("first digits (< 1,000)", numDigitsInput.width + 8, 75);    
 }
 
 function draw() {
