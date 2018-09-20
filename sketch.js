@@ -147,6 +147,20 @@ function setup() {
     canvas.parent(coreSketch);
     cursor(CROSS);
 
+    // index is used to correspond to digit; e.g. colorKeyArr[0] returns the color for all `0` digits
+    colorKeyArr = [
+        "darkslategray",
+        "red",
+        "orange",
+        "yellow",
+        "green", 
+        "aquamarine",
+        "blue",
+        "indigo",
+        "purple",
+        "magenta"
+    ];
+
     // create bounding box for display
     stroke("lightgrey");
     strokeWeight(2);
@@ -179,8 +193,35 @@ function setup() {
         (digitRectWidth / 2 + cellPadding)
     );
 
-    // TODO: populate legend
-    // TODO: number toggle
+    // TODO: DRY this agh
+    // populate legend
+    var legendStartingX = boundingBoxParamsObj["bbWidth"] - legendWidth;
+    var legendStartingY = boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 5;
+    for (keyIndex in colorKeyArr) {
+        let targetDigit = int(keyIndex);
+        let targetColor = colorKeyArr[targetDigit];
+
+        strokeWeight(3);
+        stroke(targetColor);
+        fill(targetColor);
+
+        let targetPosX = legendStartingX + targetDigit * (digitRectWidth / 2 + cellPadding);
+        let targetPosY = legendStartingY + 5;
+        rect(targetPosX, targetPosY, digitRectWidth / 2, digitRectWidth / 2);
+
+        // render digit inside rect
+        stroke("navy");
+        strokeWeight(4);
+        fill("white");
+        textSize(20);
+
+        let digitText = text(
+            targetDigit,
+            targetPosX + (digitRectWidth / 5),
+            targetPosY + (digitRectWidth / 3)
+        );
+    }
+
     // TODO: flexbox (https://github.com/processing/p5.js/wiki/Positioning-your-canvas)
 
     noStroke();
@@ -203,20 +244,6 @@ function setup() {
         boundingBoxParamsObj["bbPosX"],
         boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 30
     );
-
-    // index is used to correspond to digit; e.g. colorKeyArr[0] returns the color for all `0` digits
-    colorKeyArr = [
-        "darkslategray",
-        "red",
-        "orange",
-        "yellow",
-        "green", 
-        "aquamarine",
-        "blue",
-        "indigo",
-        "purple",
-        "magenta"
-    ];
 
     // load digits of pi & phi into arrays
     let piThousandArr = piFirstThousandDigits.split("");
