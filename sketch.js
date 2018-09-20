@@ -1,5 +1,6 @@
 var boundingBoxParamsObj;
 var colorKeyArr;
+var coreSketch;
 var digitRectWidth;
 var numCols;
 var numRows;
@@ -102,7 +103,7 @@ function render_display(pi_or_phi) {
                 let periodText = text(".", targetPosX - (cellPadding * 9 / 10), targetPosY + digitRectWidth);   
             };
 
-            // disabling this feature
+            // TODO: add toggle visible digits
             // render digit inside rect
             // stroke("navy");
             // strokeWeight(4);
@@ -115,7 +116,6 @@ function render_display(pi_or_phi) {
             //     targetPosY + (digitRectWidth * 2 / 3)
             // );
 
-            // TO-DO: size depending on spacing of bb
 
             targetDigitIndex++;
         }
@@ -136,7 +136,9 @@ function calculateDigitRectWidth(numDigits) {
 function setup() {
     var canvasWidth = windowWidth * 0.95;
     var canvasHeight = windowHeight * 0.95;
+    coreSketch = select('#coreSketch');
     var canvas = createCanvas(canvasWidth, canvasHeight);
+    canvas.parent(coreSketch);
     cursor(CROSS);
 
     // create bounding box for display
@@ -163,14 +165,17 @@ function setup() {
 
     // create legend container
     stroke("magenta");
+    let legendWidth = (digitRectWidth / 2 + cellPadding) * 10;
     rect(
-        boundingBoxParamsObj["bbWidth"] / 2,
+        boundingBoxParamsObj["bbWidth"] - legendWidth,
         boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 5,
-        (digitRectWidth / 2 + cellPadding) * 10,
+        legendWidth,
         (digitRectWidth / 2 + cellPadding)
     );
 
     // TODO: populate legend
+    // TODO: number toggle
+    // TODO: flexbox (https://github.com/processing/p5.js/wiki/Positioning-your-canvas)
 
     noStroke();
     fill("black");
@@ -229,37 +234,37 @@ function setup() {
     stroke("orange");
     strokeWeight(2);
     textSize(50);
-    let titleText1 = text("patterns of: ", 0, 50);
+    let titleText1 = text("patterns of: ", 0, canvasHeight / 12);
     titleText1Width = textWidth(titleText1);
     fill("orange");
     textSize(25);
-    let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, 115);
+    let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, canvasHeight * 2 / 12);
 
     fill("white");
     strokeWeight(4);
-    rect(titleText1Width - 50, 10, 70, 60);
+    rect(titleText1Width - 50, canvasHeight / 50, 70, 60);
 
     textSize(50);
     fill("magenta");
     stroke("orange");
-    let titleText2 = text(selectedValToVisualize, titleText1Width - 50, 50);
+    let titleText2 = text(selectedValToVisualize, titleText1Width - 50, canvasHeight / 12);
 
-    toggle = createButton("toggle");
-    toggle.position(titleText1Width, 70);
+    toggle = select("#toggle");
+    toggle.position(titleText1Width, 65);
     toggle.mousePressed(togglePiPhi);
 
     // select num digits to display
     noStroke();
     textSize(14);
-    numDigitsInput = createInput("100");
+    numDigitsInput = select("#numDigits");
+    numDigitsInput.position(35, 65);  // TODO: change this to not be hard-coded
     numDigitsInput.input(insertNumDigits);
-    numDigitsInput.position(20, 75);
     let numDigitsInputText2 = text("first digits", 14 + numDigitsInput.width, 75);
     textSize(10);
     fill("black");
     let numDigitsInputText3 = text("(max: 1000)", 14 + numDigitsInput.width, 85);
 
-    // TODO: render small histogram
+    // EXTRA TODO: render small histogram
 }
 
 function draw() {
