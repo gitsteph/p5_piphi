@@ -10,6 +10,8 @@ var numDigitsInput;
 var titleText1Width;
 var toggleVal;
 var toggle;
+var visibleDigitsBool;
+var visibleDigitsToggle;
 
 var cellPadding = 5;
 var digitsToDisplayDefault = 100;
@@ -63,6 +65,10 @@ function togglePiPhi() {
     render_display(selectedValToVisualize);
 }
 
+function toggleVisibleDigits() {
+    visibleDigitsBool = !visibleDigitsBool;
+}
+
 function insertNumDigits() {
     let numDigitsInt = Math.min(1000, parseInt(this.value()));
     let targetArr = load_num_digits(numDigitsInt, piFirstThousandDigits, phiFirstThousandDigits);
@@ -103,19 +109,19 @@ function render_display(pi_or_phi) {
                 let periodText = text(".", targetPosX - (cellPadding * 9 / 10), targetPosY + digitRectWidth);   
             };
 
-            // TODO: add toggle visible digits
             // render digit inside rect
-            // stroke("navy");
-            // strokeWeight(4);
-            // fill("white");
-            // textSize(20);
+            if (visibleDigitsBool) {
+                stroke("navy");
+                strokeWeight(4);
+                fill("white");
+                textSize(20);
 
-            // let digitText = text(
-            //     targetDigit,
-            //     targetPosX + (digitRectWidth * 1 / 3),
-            //     targetPosY + (digitRectWidth * 2 / 3)
-            // );
-
+                let digitText = text(
+                    targetDigit,
+                    targetPosX + (digitRectWidth * 1 / 3),
+                    targetPosY + (digitRectWidth * 2 / 3)
+                );
+            }
 
             targetDigitIndex++;
         }
@@ -194,7 +200,7 @@ function setup() {
     );
     let metaBox3 = text(
         "made with p5.js",
-        0,
+        boundingBoxParamsObj["bbPosX"],
         boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 30
     );
 
@@ -238,7 +244,7 @@ function setup() {
     titleText1Width = textWidth(titleText1);
     fill("orange");
     textSize(25);
-    let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, canvasHeight * 2 / 12);
+    let subtitleText = text("a small tool visualizing first pi/phi digits thru color", 0, canvasHeight * 2 / 11);
 
     fill("white");
     strokeWeight(4);
@@ -253,17 +259,22 @@ function setup() {
     toggle.position(titleText1Width, 65);
     toggle.mousePressed(togglePiPhi);
 
+    visibleDigitsToggle = select("#visibleDigitsToggle");
+    visibleDigitsToggle.position(boundingBoxParamsObj["bbWidth"] / 2, boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 25);
+    visibleDigitsToggle.mousePressed(toggleVisibleDigits);
+
     // select num digits to display
     noStroke();
     textSize(14);
     numDigitsInput = select("#numDigits");
-    numDigitsInput.position(35, 65);  // TODO: change this to not be hard-coded
+    numDigitsInput.position(30, 65);  // TODO: change this to not be hard-coded
     numDigitsInput.input(insertNumDigits);
     let numDigitsInputText2 = text("first digits", 14 + numDigitsInput.width, 75);
     textSize(10);
     fill("black");
     let numDigitsInputText3 = text("(max: 1000)", 14 + numDigitsInput.width, 85);
 
+    visibleDigitsBool = false;
     // EXTRA TODO: render small histogram
 }
 
