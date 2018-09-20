@@ -6,11 +6,12 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-	    <div>
-	    	<input type="text" id="numDigits" name="numDigits" value="100"></input>
-	    	<button type="button" id="toggle">toggle</button>
-	    	<button type="button" id="visibleDigitsToggle">digits?</button>
-	    	<div id="coreSketch"></div>
-	    </div>
+        <div>
+            <!-- might also want to print an error message if user tries to go above 1000 -->
+            <input type="number" id="numDigits" name="numDigits" min=0 max=1000 value="100"></input>
+            <button type="button" id="toggle">toggle</button>
+            <button type="button" id="visibleDigitsToggle">digits?</button>
+            <div id="coreSketch"></div>
+        </div>
     </body>
 </html>
