@@ -140,8 +140,10 @@ function calculateDigitRectWidth(numDigits) {
 }
 
 function setup() {
-    var canvasWidth = windowWidth * 0.95;
-    var canvasHeight = windowHeight * 0.95;
+    // var canvasWidth = windowWidth * 0.95;
+    // var canvasHeight = windowHeight * 0.95;
+    var canvasWidth = 980;
+    var canvasHeight = 640;
     coreSketch = select('#coreSketch');
     var canvas = createCanvas(canvasWidth, canvasHeight);
     canvas.parent(coreSketch);
@@ -235,16 +237,21 @@ function setup() {
     );
 
     let metaBox2 = text(
-        "sources: https://www.angio.net/pi/digits.html, https://www.goldennumber.net/phi-million-places/",
+        "data: https://www.angio.net/pi/digits.html, https://www.goldennumber.net/phi-million-places/",
         0,
         boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 20
     );
     let metaBox3 = text(
-        "made with p5.js",
+        "source code: https://github.com/gitsteph/p5_piphi",
         boundingBoxParamsObj["bbPosX"],
         boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 30
     );
-
+    let metaBox4 = text(
+        "made with p5.js",
+        boundingBoxParamsObj["bbPosX"],
+        boundingBoxParamsObj["bbPosY"] + boundingBoxParamsObj["bbHeight"] + 40
+    );
+ 
     // load digits of pi & phi into arrays
     let piThousandArr = piFirstThousandDigits.split("");
     let phiThousandArr = phiFirstThousandDigits.split("");
@@ -283,7 +290,7 @@ function setup() {
     let titleText2 = text(selectedValToVisualize, titleText1Width - 50, canvasHeight / 12);
 
     toggle = select("#toggle");
-    toggle.position(titleText1Width, 65);
+    toggle.position(titleText1Width - 22, 65);
     toggle.mousePressed(togglePiPhi);
 
     visibleDigitsToggle = select("#visibleDigitsToggle");
@@ -294,12 +301,12 @@ function setup() {
     noStroke();
     textSize(14);
     numDigitsInput = select("#numDigits");
-    numDigitsInput.position(30, 65);  // TODO: change this to not be hard-coded
+    numDigitsInput.position(20, 65);  // TODO: change this to not be hard-coded
     numDigitsInput.input(insertNumDigits);
-    let numDigitsInputText2 = text("first digits", 14 + numDigitsInput.width, 75);
+    let numDigitsInputText2 = text("first digits", 65, 75);
     textSize(10);
     fill("black");
-    let numDigitsInputText3 = text("(max: 1000)", 14 + numDigitsInput.width, 85);
+    let numDigitsInputText3 = text("(max: 1000)", 65, 85);
 
     visibleDigitsBool = false;
     // EXTRA TODO: render small histogram

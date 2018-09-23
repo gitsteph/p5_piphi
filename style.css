@@ -1,10 +1,10 @@
 body {
   margin: 0;
   display: flex;
-  justify-content: center;
-/*  align-items: center;*/
+  justify-content: left;
+  padding-left: 10px;
 }
 
 input {
-  width: 5%;
+  width: 50px;
 }
